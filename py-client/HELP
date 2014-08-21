@@ -1,0 +1,38 @@
+Using the 'help' command once inside the Py-Client provides a list of all
+active command plugins. 'help plugin' will give a detailed list of each
+command associated with a plugin, along with their respective doc strings.
+
+Sample commands:
+
+friend [name]: 		Adds [name] to the friends list
+unfriend [name]: 	Removes [name] from the friends list
+block [name]: 		Blocks communication from [name]
+unblock [name]: 	Unblocks communication from [name]
+fl:			Shows the friends list. Online friends are
+			  prefixed with a (*)
+sf [name] [path]:	Attempts to send a file at [path] to [name]
+gc [room]:		Connects to a groupchat session at [room]
+help:			Displays command-related information
+quit:			Exits the program
+
+Prefixing input with a slash (/) in a chat window will intepret the
+input as a command.
+
+Curses hotkeys:
+
+Ctrl + r:	Tabs right
+Ctrl + ->:	   ""
+Ctrl + e:	Tabs left
+Ctrl + <-:	   ""
+Ctrl + x:	Closes the current tab
+Ctrl + t:	Returns focus to a previous tab
+Ctrl + c:	Exits the program
+Tab:		Attemps to fill in input based on context (file path,
+		  username, etc)
+
+Tab indicators:
+
+Blinking:	Tab has new updates
+(g):		Group chat tab
+(t):		User is typing
+[name]:		Tab is a dummy (notepad, generated via "gentab" commmand)

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+CLASSPATH="xercesImpl.jar:swt.jar:."
+JARFILE="jclient.jar"
+
+if [ "$JAVA_HOME" != "" ]; then
+    $JAVA_HOME/bin/java -Djava.library.path=. -cp $CLASSPATH -jar $JARFILE $@
+else
+    /usr/bin/env java -Djava.library.path=. -cp $CLASSPATH -jar $JARFILE $@
+fi
+

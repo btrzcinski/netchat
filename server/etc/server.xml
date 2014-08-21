@@ -1,0 +1,25 @@
+<!-- Configuration for the server -->
+<configuration>
+	<!-- General directives -->
+	<general>
+		<use-xml>true</use-xml>
+		<use-ssl>true</use-ssl>
+		<loglevel>DEBUG</loglevel>
+		<logtarget type="file">nc.log</logtarget>
+		<maxlogsize>1024000000</maxlogsize> <!-- bytes -->
+		<oldlogs>10</oldlogs>
+		<service-port>45287</service-port>
+		<admin-port>45187</admin-port>
+		<win32>false</win32>
+	</general>
+	<!-- Directives for initialization time -->
+	<initialization>
+		<!-- Specifies modules to be loaded before the server starts processing clients -->
+		<module-autoload>
+			<module>NCMLogin</module>
+                        <module>NCMChat</module>
+                        <module>NCMFileTransfer</module>
+		</module-autoload>
+	</initialization>
+</configuration>
+

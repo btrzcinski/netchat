@@ -1,0 +1,6 @@
+#!/bin/bash
+
+PYTHON="`which python`"
+echo "Using $PYTHON..."
+
+exec $PYTHON client.py $@

@@ -1,0 +1,16 @@
+<message>
+<header>
+	<global>
+		<properties type="servermessage"/>
+	</global>
+
+	<servermessage>
+		<properties type="authorize_module"/>
+	</servermessage>
+</header>
+
+<content>
+	<name>test</name>
+	<version>1.0</version>
+</content>
+</message>

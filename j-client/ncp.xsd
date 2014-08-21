@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:simpleType name="globalPropsTypeAttrType">
+    	<xs:restriction base="xs:string">
+    		<xs:pattern value="[servermessage|modulemessage]"/>
+    	</xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="serverMsgPropsTypeAttrType">
+    	<xs:restriction base="xs:string"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="moduleMsgPropsNameAttrType">
+    	<xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    
+    <xs:simpleType name="moduleMsgPropsTypeAttrType">
+    	<xs:restriction base="xs:string"/>
+    </xs:simpleType>
+    
+    <xs:attributeGroup name="globalPropsAttrs">
+    	<xs:attribute name="type" type="globalPropsTypeAttrType" use="required"/>
+    </xs:attributeGroup>
+    
+    <xs:attributeGroup name="serverMsgPropsAttrs">
+    	<xs:attribute name="type" type="serverMsgPropsTypeAttrType" use="required"/>
+    </xs:attributeGroup>
+    
+    <xs:attributeGroup name="moduleMsgPropsAttrs">
+    	<xs:attribute name="name" type="moduleMsgPropsNameAttrType" use="required"/>
+    	<xs:attribute name="type" type="moduleMsgPropsTypeAttrType" use="required"/>
+    </xs:attributeGroup>
+    
+    <xs:complexType name="globalPropsType">
+    	<xs:attributeGroup ref="globalPropsAttrs"/>
+    </xs:complexType>
+    
+    <xs:complexType name="serverMsgPropsType">
+    	<xs:attributeGroup ref="serverMsgPropsAttrs"/>
+    </xs:complexType>
+    
+    <xs:complexType name="moduleMsgPropsType">
+    	<xs:attributeGroup ref="moduleMsgPropsAttrs"/>
+    </xs:complexType>
+    
+    <xs:complexType name="globalType">
+    	<xs:all>
+    		<xs:element name="properties" type="globalPropsType" minOccurs="1" maxOccurs="1"/>
+    	</xs:all>
+    </xs:complexType>
+    
+    <xs:complexType name="serverMsgType">
+    	<xs:all>
+    		<xs:element name="properties" type="serverMsgPropsType" minOccurs="1" maxOccurs="1"/>
+    	</xs:all>
+    </xs:complexType>
+    
+    <xs:complexType name="moduleMsgType">
+    	<xs:all>
+    		<xs:element name="properties" type="moduleMsgPropsType" minOccurs="1" maxOccurs="1"/>
+    	</xs:all>
+    </xs:complexType>
+    
+    <xs:complexType name="headerBaseType">
+    	<xs:sequence>
+    		<xs:element name="global" type="globalType" minOccurs="1" maxOccurs="1"/>
+    	</xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="headerType">
+    	<xs:complexContent>
+    		<xs:extension base="headerBaseType">
+    			<xs:choice>
+    				<xs:element name="servermessage" type="serverMsgType"/>
+    				<xs:element name="modulemessage" type="moduleMsgType"/>
+    			</xs:choice>
+    		</xs:extension>
+    	</xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="contentType">
+    	<xs:sequence>
+    		<xs:any processContents="skip" minOccurs="1" maxOccurs="1"/>
+    	</xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="messageType">
+    	<xs:all>
+    		<xs:element name="header" type="headerType" minOccurs="1" maxOccurs="1"/>
+    		<xs:element name="content" type="contentType" minOccurs="1" maxOccurs="1"/>
+    	</xs:all>
+    </xs:complexType>
+    
+    <xs:element name="message" type="messageType"/>
+</xs:schema>

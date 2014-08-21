@@ -1,0 +1,29 @@
+<?xml version="1.0"?> <!-- Not yet implemented -->
+<message>
+ <header>
+
+  <global>
+   <properties type="modulemessage"/>
+  </global>
+
+  <module> <!-- Specific to module messages -->
+   <properties name="mail"/>
+   <!-- Module specific header data -->
+  </module>
+
+ </header>
+
+ <content>
+	<to>viserys@gmail.com</to>
+	<from>andy@foo.bar</from>
+	<msg>Hi this is an email.</msg>
+ </content>
+
+</message>
+
+<!--Dict:
+
+"type", "modulemessage"
+"properties", {"name":"mail"}
+"content", {"to":"viserys","from":"andy","msg":"Hi this is an email"}-->
+

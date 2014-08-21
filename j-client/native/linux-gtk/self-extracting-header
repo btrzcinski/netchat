@@ -1,0 +1,12 @@
+#/bin/sh
+#Idea from http://linux.org.mt/article/selfextract
+
+echo "Extracting NetChat Linux Dist: $0"
+echo ""
+
+START=`awk '/^__BEGIN-DATA__/ { print NR + 1; exit 0; }' $0`
+
+tail -n +$START $0 | tar -xjv
+exit $?
+
+__BEGIN-DATA__

@@ -1,0 +1,147 @@
+<project name="j-client" default="dist-files" basedir=".">
+    <target name="build-all">
+        <javac srcdir="./classes" excludes="**/testing/*.java" classpath="./classes:./native/windows/swt.jar:./xercesImpl.jar:./jface.jar" />
+    </target>
+    <target name="rebuild-all" depends="clean, build-all" />
+    <target name="rebuild-all-testing" depends="clean">
+        <javac srcdir=".">
+            <include name="**/*.java" />
+        </javac>
+    </target>
+    <target name="dist-files" depends="build-all">
+        <mkdir dir="netchat-dist" />
+        <jar destfile="netchat-dist/jclient.jar" basedir="classes" includes="**/*.class" manifest="manifest.txt" update="true" />
+        <jar destfile="netchat-dist/jclient.jar" basedir="." includes="icons/*.*" update="true" />
+        <copy todir="netchat-dist">
+            <fileset file="jface.jar" />
+            <fileset file="xercesImpl.jar" />
+            <fileset file="conf.d" />
+            <fileset file="truststore" />
+            <fileset file="COPYING" />
+            <fileset file="INSTRUCTIONS" />
+        </copy>
+        <copy todir="netchat-dist/conf.d">
+            <fileset file="conf.d/*.conf" />
+        </copy>
+        <copy todir="netchat-dist/truststore">
+            <fileset file="truststore/*" />
+        </copy>
+    </target>
+    <target name="solaris-sparc-dist-files" depends="dist-files">
+        <mkdir dir="solaris-sparc-dist" />
+        <copy todir="./solaris-sparc-dist">
+            <fileset dir="./netchat-dist" />
+            <fileset dir="./native/solaris-sparc-gtk" />
+            <fileset file="start" />
+        </copy>
+        <exec executable="/bin/chmod" dir="." failifexecutionfails="false">
+            <arg value="+x" />
+            <arg value="solaris-sparc-dist/start" />
+        </exec>
+    </target>
+    <target name="osx-dist-files" depends="dist-files">
+        <mkdir dir="osx-dist" />
+        <copy todir="./osx-dist">
+            <fileset dir="./netchat-dist" />
+            <fileset dir="./native/osx" />
+            <fileset file="start" />
+        </copy>
+        <exec executable="/bin/chmod" dir="." failifexecutionfails="false">
+            <arg value="+x" />
+            <arg value="osx-dist/start" />
+        </exec>
+    </target>
+    <target name="linux64-dist-files" depends="dist-files">
+        <mkdir dir="linux64-dist" />
+        <copy todir="./linux64-dist">
+            <fileset dir="./netchat-dist" />
+            <fileset dir="./native/linux64-gtk" />
+            <fileset file="start" />
+        </copy>
+        <exec executable="/bin/chmod" dir="." failifexecutionfails="false">
+            <arg value="+x"/>
+            <arg value="linux64-dist/start" />
+        </exec>
+    </target>
+    <target name="linux-dist-files" depends="dist-files">
+        <mkdir dir="linux-dist" />
+        <copy todir="./linux-dist">
+            <fileset dir="./netchat-dist" />
+            <fileset dir="./native/linux-gtk" />
+            <fileset file="start" />
+        </copy>
+        <exec executable="/bin/chmod" dir="." failifexecutionfails="false">
+            <arg value="+x" />
+            <arg value="linux-dist/start" />
+        </exec>
+    </target>
+    <target name="win32-dist-files" depends="dist-files">
+        <mkdir dir="win32-dist" />
+        <copy todir="./win32-dist">
+            <fileset dir="netchat-dist" />
+            <fileset dir="./native/windows" />
+        </copy>
+    </target>
+    <target name="win32-dist" depends="win32-dist-files">
+        <zip destfile="netchat-jclient-win32.zip" basedir="." includes="win32-dist/* win32-dist/conf.d/* win32-dist/truststore/*" />
+    </target>
+    <target name="linux-dist" depends="linux-dist-files">
+        <tar destfile="netchat-jclient-linux.tar.bz2" compression="bzip2" basedir="." includes="linux-dist/* linux-dist/conf.d/* linux-dist/truststore/*" />
+	<exec dir="." executable="/bin/cat" output="nc-jclient-selfextract.sh" failifexecutionfails="false">
+	    <arg line="./native/linux-gtk/self-extracting-header ./netchat-jclient-linux.tar.bz2"/>
+	</exec>
+        <exec executable="/bin/chmod" dir="." failifexecutionfails="false">
+            <arg value="+x"/>
+            <arg value="nc-jclient-selfextract.sh" />
+        </exec>
+    </target>
+    <target name="linux64-dist" depends="linux64-dist-files">
+        <tar destfile="netchat-jclient-linux64.tar.bz2" compression="bzip2" basedir="." includes="linux64-dist/* linux64-dist/conf.d/* linux64-dist/truststore/*" />
+	<exec dir="." executable="/bin/cat" output="nc-jclient64-selfextract.sh" failifexecutionfails="false">
+	    <arg line="./native/linux-gtk/self-extracting-header ./netchat-jclient-linux64.tar.bz2"/>
+	</exec>
+        <exec executable="/bin/chmod" dir="." failifexecutionfails="false">
+            <arg value="+x"/>
+            <arg value="nc-jclient64-selfextract.sh" />
+        </exec>
+    </target>
+    <target name="osx-dist" depends="osx-dist-files">
+        <zip destfile="netchat-jclient-osx.zip" basedir="." includes="osx-dist/* osx-dist/conf.d* osx-dist/truststore/*" />
+    </target>
+    <target name="solaris-sparc-dist" depends="solaris-sparc-dist-files">
+        <tar destfile="netchat-jclient-solaris-sparc.tar.bz2" compression="bzip2" basedir="." includes="solaris-sparc-dist/* solaris-sparc-dist/conf.d/* solaris-sparc-dist/truststore/*" />
+	<exec dir="." executable="/bin/cat" output="nc-jclient-sparc-selfextract.sh" failifexecutionfails="false">
+	    <arg line="./native/linux-gtk/self-extracting-header ./netchat-jclient-solaris-sparc.tar.bz2"/>
+	</exec>
+        <exec executable="/bin/chmod" dir="." failifexecutionfails="false">
+            <arg value="+x"/>
+            <arg value="nc-jclient-sparc-selfextract.sh" />
+        </exec>
+    </target>
+    <target name="dist" depends="linux-dist, linux64-dist, win32-dist, osx-dist, solaris-sparc-dist" />
+    <target name="clean">
+        <delete>
+            <fileset dir="." includes="**/*.class" />
+        </delete>
+    </target>
+    <target name="dist-clean" depends="clean">
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="." includes="netchat-jclient-linux.tar.bz2" />
+            <fileset dir="netchat-dist" />
+            <fileset dir="." includes="netchat-jclient-win32.zip" />
+            <fileset dir="linux-dist" />
+            <fileset dir="win32-dist" />
+            <fileset dir="." includes="netchat-jclient-osx.zip" />
+            <fileset dir="osx-dist" />
+        </delete>
+    </target>
+    <target name="kate-clean" depends="clean">
+        <delete>
+            <fileset dir="." includes="*.java~" />
+        </delete>
+    </target>
+    <target name="squeaky-clean" depends="dist-clean, kate-clean" />
+    <target name="docs">
+        <javadoc sourcepath="classes" destdir="docs" packagenames="netchat.*,net.iharder.*" />
+    </target>
+</project>

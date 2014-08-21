@@ -1,0 +1,11 @@
+<message>
+	<header>
+		<global>
+			<properties type="servermessage"/>
+		</global>
+		<message>
+			<properties type="data"/>
+		</message>
+	</header>
+	<content>This is a test.</content>
+</message>

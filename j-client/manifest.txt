@@ -1,0 +1,3 @@
+Main-Class: netchat.system.NCClient
+Class-Path: ./xercesImpl.jar ./swt.jar
+

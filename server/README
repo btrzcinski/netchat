@@ -1,0 +1,47 @@
+NetChat Server
+======= ======
+
+Please note the presence of etc/server.xml. It's fairly self-explanatory--same options as those outlined below.
+
+Description of options:
+
+-l, --log		Logging level (default: INFO)
+			This sets the severity threshold of the logger. Messages of the
+			severity you set it to and above will be displayed; any of
+			lower severity are ignored. Your options in order of precedence:
+			DEBUG < INFO < WARN < ERROR < FATAL
+
+-L, --log-to-file FILE	Log to a specified file (default: log to STDOUT)
+			This overrides console logging.
+
+    --old-logs NUMBER	Keep NUMBER old logs before discarding (default: 10)
+    			n/a if logging to STDOUT.
+
+    --max-log-size SIZE Grow a log until it reaches SIZE bytes (default: 1024000)
+    			1024000 is ~1MB. n/a if logging to STDOUT.
+
+-p, --port PORT		Service port (default: 45287)
+			Change this if you run the server and get a bind() error.
+
+-a, --admin-port PORT	Admin port (default: 45187)
+			Change this if you run the server and get a bind() error for gserver relating to
+			starting the admin manager.
+
+-s, --[no-]ssl		Use OpenSSL (default: yes)
+			If you disable this option, the server will not use
+			OpenSSL to encrypt every connection.
+
+-x, --[no-]xml		Use XML for data (default: yes)
+			If you disable this option, the server will not use
+			the NetChat Protocol and will simply echo back whatever
+			you send it.
+
+-w, --[no-]win32	Turn off child signal trapping for Win32 (default: no)
+			If you enable this option, the server will not trap
+			the UNIX signal CLD, and defunct processes will result.
+			If you're on Win32, this signal nor the defunct problem
+			exist, so you should turn this on to prevent a crash.
+
+
+Copyright(C) 2006-2007 Barnett Trzcinski and the NetChat Project.
+

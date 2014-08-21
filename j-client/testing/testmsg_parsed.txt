@@ -1,0 +1,238 @@
+Document is starting...
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: message
+  Raw Name: message
+  Attributes:
+End of start of element.
+
+Characters recieved:
+  Characters: 
+ 
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: header
+  Raw Name: header
+  Attributes:
+End of start of element.
+
+Characters recieved:
+  Characters: 
+
+  
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: global
+  Raw Name: global
+  Attributes:
+End of start of element.
+
+Characters recieved:
+  Characters: 
+   
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: properties
+  Raw Name: properties
+  Attributes:
+    Namespace URI: 
+    Type: CDATA
+    Qualified (prefixed) Name: type
+    Local Name: type
+    Value: modulemessage
+End of start of element.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: properties
+  Raw Name: properties
+End of end of element.
+
+Characters recieved:
+  Characters: 
+  
+End of characters.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: global
+  Raw Name: global
+End of end of element.
+
+Characters recieved:
+  Characters: 
+
+  
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: module
+  Raw Name: module
+  Attributes:
+End of start of element.
+
+Characters recieved:
+  Characters:  
+End of characters.
+
+Characters recieved:
+  Characters: 
+   
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: properties
+  Raw Name: properties
+  Attributes:
+    Namespace URI: 
+    Type: CDATA
+    Qualified (prefixed) Name: name
+    Local Name: name
+    Value: mail
+End of start of element.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: properties
+  Raw Name: properties
+End of end of element.
+
+Characters recieved:
+  Characters: 
+   
+End of characters.
+
+Characters recieved:
+  Characters: 
+  
+End of characters.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: module
+  Raw Name: module
+End of end of element.
+
+Characters recieved:
+  Characters: 
+
+ 
+End of characters.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: header
+  Raw Name: header
+End of end of element.
+
+Characters recieved:
+  Characters: 
+
+ 
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: content
+  Raw Name: content
+  Attributes:
+End of start of element.
+
+Characters recieved:
+  Characters: 
+	
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: to
+  Raw Name: to
+  Attributes:
+End of start of element.
+
+Characters recieved:
+  Characters: viserys@gmail.com
+End of characters.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: to
+  Raw Name: to
+End of end of element.
+
+Characters recieved:
+  Characters: 
+	
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: from
+  Raw Name: from
+  Attributes:
+End of start of element.
+
+Characters recieved:
+  Characters: andy@foo.bar
+End of characters.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: from
+  Raw Name: from
+End of end of element.
+
+Characters recieved:
+  Characters: 
+	
+End of characters.
+
+Start of element recieved:
+  Namespace URI: 
+  Local Name: msg
+  Raw Name: msg
+  Attributes:
+End of start of element.
+
+Characters recieved:
+  Characters: Hi this is an email.
+End of characters.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: msg
+  Raw Name: msg
+End of end of element.
+
+Characters recieved:
+  Characters: 
+ 
+End of characters.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: content
+  Raw Name: content
+End of end of element.
+
+Characters recieved:
+  Characters: 
+
+
+End of characters.
+
+End of element recieved:
+  Namespace URI: 
+  Local Name: message
+  Raw Name: message
+End of end of element.
+Document is ending...

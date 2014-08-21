@@ -1,0 +1,3 @@
+$ tar jxvf jclient.tar.bz2
+$ cd netchat-dist
+$ java -jar jclient.jar
