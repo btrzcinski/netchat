@@ -11,7 +11,7 @@ APP_VERSION = '2.1b'
 
 # -- Connection Settings --
 
-HOST = 'netchat.tjhsst.edu'
+HOST = 'localhost'
 PORT = 45287
 
 PWORD_HASH = 'sha512'
