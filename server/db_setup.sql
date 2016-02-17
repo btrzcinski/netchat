@@ -18,6 +18,7 @@ DROP TABLE chat_blocks;
 
 CREATE TABLE chat_blocks (
     id int auto_increment primary key,
+    username varchar(255),
     block varchar(255)
 );
 
