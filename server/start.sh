@@ -27,7 +27,7 @@ if [ -f /usr/local/bin/ruby ]; then
 elif [ -f /usr/bin/ruby ]; then
 	echo "*** Using /usr/bin/ruby (`/usr/bin/ruby --version`)"
 	echo
-	/usr/bin/ruby start.rb $@
+	/usr/bin/ruby -I. start.rb $@
 else
 	echo "Ruby not found in /usr/local/bin or /usr/bin"
 fi
