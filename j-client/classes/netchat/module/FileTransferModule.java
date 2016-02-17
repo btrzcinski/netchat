@@ -149,7 +149,7 @@ public class FileTransferModule extends AbstractModule {
 						filenameAppend = "" + fileNum;
 					}
 					
-					Base64.decodeToFile(receivedEncodedFiles.get(e.id), f.getPath());
+					net.iharder.Base64.decodeToFile(receivedEncodedFiles.get(e.id), f.getPath());
 					
 					Debug.println("Finished decoding file.  It is now located at " + f.getAbsolutePath(), 0);
 				}
@@ -246,7 +246,7 @@ public class FileTransferModule extends AbstractModule {
 		
 		transfers.put(id, new String[] {user, f.getName()});
 		transferFiles.put(id, f);
-		encodedFiles.put(id, Base64.encodeFromFile(f.getPath()));
+		encodedFiles.put(id, net.iharder.Base64.encodeFromFile(f.getPath()));
 		
 		Element content = new Element("content");
 		new Element(content, "id").addText(id);

@@ -1,2 +1,6 @@
 *.class
+nc-jclient64-selfextract.sh
+linux64-dist/
+*.bz2
+netchat-dist/
 
