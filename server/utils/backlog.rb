@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'mysql'
+require 'mysql2'
 
 if ARGV.length < 1
    puts "Usage: backlog.rb [-c] username"
@@ -17,18 +17,15 @@ MysqlUser = 'netchat'
 MysqlPass = 'tahcten'
 MysqlDb = 'netchat'
 
-mysql = Mysql.new MysqlHost, MysqlUser, MysqlPass
-mysql.reconnect = true
-mysql.select_db MysqlDb
+mysql = Mysql2::Client.new :host => MysqlHost, :username => MysqlUser, :password => MysqlPass, :reconnect => true, :database => MysqlDb
 
 unless ARGV[0] == "-c"
-   q = mysql.query("SELECT * FROM chat_backlog WHERE destination='#{ARGV[0]}' ORDER BY sent ASC")
-   q.each_hash do |h|
+   q = mysql.query("SELECT * FROM chat_backlog WHERE destination='#{mysql.escape(ARGV[0])}' ORDER BY sent ASC")
+   q.each do |h|
       puts "Sent #{h['sent']} from #{h['source']}, Message: #{h['message']}"
    end
-   q.free
 else
-   mysql.query("DELETE FROM chat_backlog WHERE destination='#{ARGV[1]}'")
+   mysql.query("DELETE FROM chat_backlog WHERE destination='#{mysql.escape(ARGV[1])}'")
 	 puts "Cleared #{ARGV[1]}'s backlog"
 end
 
