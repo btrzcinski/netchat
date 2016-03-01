@@ -26,9 +26,7 @@ module ModLand
       # Overridden to connect to MySQL.
       def on_registry_add
          $log.debug "[NCMMail] Connecting to database..."
-         @mysql = Mysql.new @mysql_host, @mysql_user, @mysql_pass
-         @mysql.reconnect = true
-         @mysql.select_db @mysql_db
+         @mysql = Mysql2::Client.new :host => @mysql_host, :username => @mysql_user, :password => @mysql_pass, :reconnect => true, :database => @mysql_db
       end
       # Overridden to disconnect from MySQL.
       def on_registry_delete
@@ -53,20 +51,20 @@ module ModLand
       end
       # Turns a folder ID into a folder name.
       def id_to_folder(folderid)
-         q = @mysql.query("SELECT folder FROM mail_folders WHERE id=#{Mysql.quote(folderid)}")
-         return nil unless q.num_rows > 0
+         q = @mysql.query("SELECT folder FROM mail_folders WHERE id=#{@mysql.escape(folderid)}")
+         return nil unless q.count > 0
       end
       # If a client has no folders set up for the mail system, go for it.
       def checksetup(client)
          username = self.moduleaccessor.access("login").get_username client
          userid = self.moduleaccessor.access("login").id_by_username(username)
       
-         q = @mysql.query("SELECT * FROM mail_folders WHERE user_id=#{Mysql.quote(username)}")
-         if q.num_rows == 0
+         q = @mysql.query("SELECT * FROM mail_folders WHERE user_id=#{@mysql.escape(username)}")
+         if q.count == 0
             $log.warn "[NCMMail] User #{username} has no mail folders, setting them up"
-            @mysql.query("INSERT INTO mail_folders (user_id, parent_id, folder) VALUES (#{Mysql.quote(userid)}, -1, 'Inbox')")
-            @mysql.query("INSERT INTO mail_folders (user_id, parent_id, folder) VALUES (#{Mysql.quote(userid)}, -1, 'Outbox')")
-            @mysql.query("INSERT INTO mail_folders (user_id, parent_id, folder) VALUES (#{Mysql.quote(userid)}, -1, 'Sent')")
+            @mysql.query("INSERT INTO mail_folders (user_id, parent_id, folder) VALUES (#{@mysql.escape(userid)}, -1, 'Inbox')")
+            @mysql.query("INSERT INTO mail_folders (user_id, parent_id, folder) VALUES (#{@mysql.escape(userid)}, -1, 'Outbox')")
+            @mysql.query("INSERT INTO mail_folders (user_id, parent_id, folder) VALUES (#{@mysql.escape(userid)}, -1, 'Sent')")
          end
       end
 
@@ -77,20 +75,20 @@ module ModLand
       # Processes type 'folder_list_request'.
       # This is when a client wants to get a list of mail folders, such as Inbox and Sent Items.
       def msg_folder_list_request (client, header, content)
-         q = @mysql.query("SELECT * FROM mail_folders WHERE user_id=#{Mysql.quote(self.moduleaccessor.access("login").id_by_username(self.moduleaccessor.access("login").get_username(client)))}")
-         $log.warn "[NCMMail] User #{self.moduleaccessor.access("login").get_username(client)} does not have any mail folders" if q.num_rows == 0
+         q = @mysql.query("SELECT * FROM mail_folders WHERE user_id=#{@mysql.escape(self.moduleaccessor.access("login").id_by_username(self.moduleaccessor.access("login").get_username(client)))}")
+         $log.warn "[NCMMail] User #{self.moduleaccessor.access("login").get_username(client)} does not have any mail folders" if q.count == 0
          response = {:header => REXML::Element.new 'modulemessage', :content => REXML::Element.new 'content'}
          response[:header].add REXML::Element.new('properties')
          response[:header].elements['properties'].attributes['type'] = 'folder_list'
          
          folders = []
          parents = {}
-         while (h = q.fetch_hash) != nil
+         q.each { |h|
             ef = REXML::Element.new 'folder'
             ef.attributes['name'] = h['folder']
             folders[h['folder']] = ef
             parents[h['folder']] = h['parent_id']
-         end
+         }
          folders.each { |n,f|
             parentid = parents[n]
             unless parentid < 0

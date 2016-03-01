@@ -168,8 +168,8 @@ module ModLand
       end
       # Checks that a user exists at all in MySQL. Returns true/false.
       def user_exists?(username)
-         q = @mysql.query("SELECT * FROM login_users WHERE username='#{Mysql.quote(username)}'")
-         return q.num_rows > 0
+         q = @mysql.query("SELECT * FROM login_users WHERE username='#{@mysql.escape(username)}'")
+         return q.count > 0
       end
       # Checks that a user is in the authentication database and is online. Returns true/false.
       def user_online?(username)
@@ -180,9 +180,7 @@ module ModLand
       # Overridden to connect to MySQL and initialize a new authentication database.
       def on_registry_add
          $log.debug "[NCMLogin] Connecting to database..."
-         @mysql = Mysql.new @mysql_host, @mysql_user, @mysql_pass
-         @mysql.reconnect = true
-         @mysql.select_db @mysql_db
+         @mysql = Mysql2::Client.new :host => @mysql_host, :username => @mysql_user, :password => @mysql_pass, :reconnect => true, :database => @mysql_db
          @userhash = Hash.new
          @clienthash = Hash.new
       end
@@ -200,16 +198,16 @@ module ModLand
       # username::         username of the user
       # password::         hashed password
       def user_by_id(id)
-         q = @mysql.query("SELECT username,password FROM login_users WHERE id=#{Mysql.quote(id)}")
-         return nil unless q.num_rows > 0
-         row = q.fetch_hash
+         q = @mysql.query("SELECT username,password FROM login_users WHERE id=#{@mysql.escape(id)}")
+         return nil unless q.count > 0
+         row = q.first()
          return {:username => row['username'], :password => row['password']}
       end
       # Retrieves a database ID by username.
       def id_by_username(username)
-         q = @mysql.query("SELECT id FROM login_users WHERE username='#{Mysql.quote(username)}'")
-         return nil unless q.num_rows > 0
-         row = q.fetch_hash
+         q = @mysql.query("SELECT id FROM login_users WHERE username='#{@mysql.escape(username)}'")
+         return nil unless q.count > 0
+         row = q.first()
          return row['id']
       end
 
@@ -247,9 +245,9 @@ module ModLand
             else
 
                # check database
-               q = @mysql.query("SELECT * FROM login_users WHERE username='#{Mysql.quote(username.text)}'")
-               if q.num_rows > 0
-                  row = q.fetch_hash
+               q = @mysql.query("SELECT * FROM login_users WHERE username='#{@mysql.escape(username.text)}'")
+               if q.count > 0
+                  row = q.first()
                   if row['password'] == password.text
                      if self.user_online? username.text
                         $log.debug "[NCMLogin] Authentication passed for #{username.text} but user already signed on and active"

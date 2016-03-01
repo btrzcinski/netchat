@@ -24,7 +24,7 @@ Please see the enclosed file COPYING for further details.
    require 'gserver'
    require 'highline'
    require 'logger'
-   require 'mysql'
+   require 'mysql2'
    require 'openssl'
    require 'optparse'
    require 'rexml/document'

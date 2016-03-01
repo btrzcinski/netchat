@@ -79,8 +79,8 @@ module ModLand
          response_content.elements['username'].attributes['online'] = self.moduleaccessor.access("login").user_online?(u).to_s
 
 
-         q = @mysql.query("SELECT username FROM chat_friends WHERE buddy='#{Mysql.quote(u)}'")
-         q.each_hash do |row|
+         q = @mysql.query("SELECT username FROM chat_friends WHERE buddy='#{@mysql.escape(u)}'")
+         q.each do |row|
             dest_client = self.moduleaccessor.access("login").get_client row['username']
             unless dest_client.nil? or dest_client.closed?
                begin
@@ -136,8 +136,8 @@ module ModLand
          response_content.add(REXML::Element.new('message'))
          response_content.elements['message'].text = @usermessages[u]
 
-         q = @mysql.query("SELECT username FROM chat_friends WHERE buddy='#{Mysql.quote(u)}'")
-         q.each_hash do |row|
+         q = @mysql.query("SELECT username FROM chat_friends WHERE buddy='#{@mysql.escape(u)}'")
+         q.each do |row|
             dest_client = self.moduleaccessor.access("login").get_client row['username']
             unless dest_client.nil? or dest_client.closed?
                domain, port, name, addr = dest_client.peeraddr
@@ -163,9 +163,7 @@ module ModLand
       # * Register callbacks with NCMLogin
       def on_registry_add
          $log.debug "[NCMChat] Connecting to database..."
-         @mysql = Mysql.new @mysql_host, @mysql_user, @mysql_pass
-         @mysql.reconnect = true
-         @mysql.select_db @mysql_db
+         @mysql = Mysql2::Client.new :host => @mysql_host, :username => @mysql_user, :password => @mysql_pass, :reconnect => true, :database => @mysql_db
          $log.debug "[NCMChat] Registering NCMLogin hooks..."
          self.moduleaccessor.access("login").register_signin_hook(self.method(:statuschange))
          self.moduleaccessor.access("login").register_signout_hook(self.method(:statuschange))
@@ -245,8 +243,8 @@ module ModLand
             # route as normal.
             dest_name = content.elements["username"].text
             # check for blocks
-            q = @mysql.query("SELECT * FROM chat_blocks WHERE username='#{Mysql.quote(src_name)}' AND block='#{Mysql.quote(dest_name)}'")
-            if q.num_rows > 0
+            q = @mysql.query("SELECT * FROM chat_blocks WHERE username='#{@mysql.escape(src_name)}' AND block='#{@mysql.escape(dest_name)}'")
+            if q.count > 0
                # blocked!
                $log.debug "[NCMChat] User #{src_name} tried to send message to #{dest_name} who has blocked #{src_name}"
                response_properties.attributes["type"] = 'error_message'
@@ -267,7 +265,7 @@ module ModLand
                   self.communicator.send_message dest_client, response_header, response_content
                else
                   if self.moduleaccessor.access("login").user_exists? dest_name
-                     @mysql.query("INSERT INTO chat_backlog (sent, source, destination, message) VALUES (NOW(), '#{Mysql.quote(src_name)}', '#{Mysql.quote(dest_name)}', '#{Mysql.quote(dest_message)}')")
+                     @mysql.query("INSERT INTO chat_backlog (sent, source, destination, message) VALUES (NOW(), '#{@mysql.escape(src_name)}', '#{@mysql.escape(dest_name)}', '#{@mysql.escape(dest_message)}')")
                      response_properties.attributes["type"] = 'warning_message'
                      response_content.add(REXML::Element.new('message'))
                      response_content.elements['message'].text = 'Your buddy is not online, but they will receive your messages when they sign on.'
@@ -283,7 +281,6 @@ module ModLand
                   end
                end
             end
-            q.free
          elsif msg_type == "room"
             # route to room.
             dest_room = content.elements["room"].text
@@ -347,10 +344,10 @@ module ModLand
          response_properties = response_header.elements['properties']
 
          username = self.moduleaccessor.access("login").get_username client
-         q = @mysql.query("SELECT * FROM chat_friends WHERE username='#{Mysql.quote(username)}'")
-         $log.debug "[NCMChat] Querying MySQL with: 'SELECT * FROM chat_friends WHERE username='#{Mysql.quote(username)}'"
+         q = @mysql.query("SELECT * FROM chat_friends WHERE username='#{@mysql.escape(username)}'")
+         $log.debug "[NCMChat] Querying MySQL with: 'SELECT * FROM chat_friends WHERE username='#{@mysql.escape(username)}'"
          response_properties.attributes["type"] = 'friends_list'
-         q.each_hash do |row|
+         q.each do |row|
             f = REXML::Element.new 'username'
             f.text = row['buddy']
             f.attributes['online'] = self.moduleaccessor.access("login").user_online?(row['buddy']).to_s
@@ -358,7 +355,6 @@ module ModLand
             f.attributes['message'] = @usermessages[row['buddy']]
             response_content.add f
          end
-         q.free
 
          return {:header => response_header, :content => response_content}
       end
@@ -377,22 +373,21 @@ module ModLand
          f = content.elements["username"].text
          ex = self.moduleaccessor.access("login").user_exists? f
          if ex
-            q = @mysql.query("SELECT * FROM chat_friends WHERE username='#{Mysql.quote(username)}' AND buddy='#{Mysql.quote(f)}'")
-            if q.num_rows > 0
+            q = @mysql.query("SELECT * FROM chat_friends WHERE username='#{@mysql.escape(username)}' AND buddy='#{@mysql.escape(f)}'")
+            if q.count > 0
                response_properties.attributes["type"] = 'deny_friend'
                response_content.add(REXML::Element.new('username'))
                response_content.elements['username'].text = f
                response_content.add(REXML::Element.new("reason"))
                response_content.elements['reason'].text = 'You already have that user on your list.'
             else
-               @mysql.query("INSERT INTO chat_friends (username, buddy) VALUES ('#{Mysql.quote(username)}', '#{Mysql.quote(f)}')")
+               @mysql.query("INSERT INTO chat_friends (username, buddy) VALUES ('#{@mysql.escape(username)}', '#{@mysql.escape(f)}')")
                response_properties.attributes["type"] = 'authorize_friend'
                response_content.add content.elements['username']
                response_content.elements['username'].attributes['online'] = self.moduleaccessor.access("login").user_online?(f).to_s
                response_content.add(REXML::Element.new('message'))
                response_content.elements['message'].text = @usermessages[f]
             end
-            q.free
          else
             response_properties.attributes["type"] = 'deny_friend'
             response_content.add content.elements["username"]
@@ -407,7 +402,7 @@ module ModLand
       def msg_remove_friend (client, header, content)
          username = self.moduleaccessor.access("login").get_username client
          buddy = content.elements["username"].text
-         @mysql.query("DELETE FROM chat_friends WHERE username='#{Mysql.quote(username)}' AND buddy='#{Mysql.quote(buddy)}'")
+         @mysql.query("DELETE FROM chat_friends WHERE username='#{@mysql.escape(username)}' AND buddy='#{@mysql.escape(buddy)}'")
 
          return nil
       end
@@ -423,16 +418,15 @@ module ModLand
 
          response_properties.attributes['type'] = 'backlog'
          username = self.moduleaccessor.access('login').get_username client
-         q = @mysql.query("SELECT * FROM chat_backlog WHERE destination='#{Mysql.quote(username)}' ORDER BY sent ASC")
-         q.each_hash do |row|
+         q = @mysql.query("SELECT * FROM chat_backlog WHERE destination='#{@mysql.escape(username)}' ORDER BY sent ASC")
+         q.each do |row|
             m = REXML::Element.new 'message'
             m.attributes['src'] = row['source']
             m.attributes['sent'] = row['sent']
             m.text = row['message']
             response_content.add m
          end
-         q.free
-         @mysql.query("DELETE FROM chat_backlog WHERE destination='#{Mysql.quote(username)}'")
+         @mysql.query("DELETE FROM chat_backlog WHERE destination='#{@mysql.escape(username)}'")
 
          return {:header => response_header, :content => response_content}
       end
@@ -448,19 +442,18 @@ module ModLand
          f = content.elements["username"].text
          ex = self.moduleaccessor.access("login").user_exists? f
          if ex
-            q = @mysql.query("SELECT * FROM chat_blocks WHERE username='#{Mysql.quote(username)}' AND block='#{Mysql.quote(f)}'")
-            if q.num_rows > 0
+            q = @mysql.query("SELECT * FROM chat_blocks WHERE username='#{@mysql.escape(username)}' AND block='#{@mysql.escape(f)}'")
+            if q.count > 0
                response_properties.attributes["type"] = 'deny_block_user'
                response_content.add(REXML::Element.new('username'))
                response_content.elements['username'].text = f
                response_content.add(REXML::Element.new("reason"))
                response_content.elements['reason'].text = 'You already have that user on your block list.'
             else
-               @mysql.query("INSERT INTO chat_blocks (username, block) VALUES ('#{Mysql.quote(username)}', '#{Mysql.quote(f)}')")
+               @mysql.query("INSERT INTO chat_blocks (username, block) VALUES ('#{@mysql.escape(username)}', '#{@mysql.escape(f)}')")
                response_properties.attributes["type"] = 'authorize_block_user'
                response_content.add content.elements['username']
             end
-            q.free
          else
             response_properties.attributes["type"] = 'deny_block_user'
             response_content.add content.elements["username"]
@@ -477,15 +470,14 @@ module ModLand
          response_properties = response_header.elements['properties']
 
          username = self.moduleaccessor.access("login").get_username client
-         q = @mysql.query("SELECT * FROM chat_blocks WHERE username='#{Mysql.quote(username)}'")
-         $log.debug "[NCMChat] Querying MySQL with: 'SELECT * FROM chat_blocks WHERE username='#{Mysql.quote(username)}'"
+         q = @mysql.query("SELECT * FROM chat_blocks WHERE username='#{@mysql.escape(username)}'")
+         $log.debug "[NCMChat] Querying MySQL with: 'SELECT * FROM chat_blocks WHERE username='#{@mysql.escape(username)}'"
          response_properties.attributes["type"] = 'block_list'
-         q.each_hash do |row|
+         q.each do |row|
             f = REXML::Element.new 'username'
             f.text = row['block']
             response_content.add f
          end
-         q.free
 
          return {:header => response_header, :content => response_content}
       end
@@ -494,7 +486,7 @@ module ModLand
       def msg_remove_block (client, header, content)
          username = self.moduleaccessor.access("login").get_username client
          block = content.elements["username"].text
-         @mysql.query("DELETE FROM chat_blocks WHERE username='#{Mysql.quote(username)}' AND block='#{Mysql.quote(block)}'")
+         @mysql.query("DELETE FROM chat_blocks WHERE username='#{@mysql.escape(username)}' AND block='#{@mysql.escape(block)}'")
 
          return nil
       end

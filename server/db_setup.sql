@@ -4,7 +4,7 @@ GRANT ALL ON netchat.* to 'netchat'@'localhost' IDENTIFIED BY 'tahcten';
 
 USE netchat;
 
-DROP TABLE chat_backlog;
+DROP TABLE IF EXISTS chat_backlog;
 
 CREATE TABLE chat_backlog (
     id int auto_increment primary key,
@@ -14,7 +14,7 @@ CREATE TABLE chat_backlog (
     message blob
 );
 
-DROP TABLE chat_blocks;
+DROP TABLE IF EXISTS chat_blocks;
 
 CREATE TABLE chat_blocks (
     id int auto_increment primary key,
@@ -22,7 +22,7 @@ CREATE TABLE chat_blocks (
     block varchar(255)
 );
 
-DROP TABLE chat_friends;
+DROP TABLE IF EXISTS chat_friends;
 
 CREATE TABLE chat_friends (
     id int auto_increment primary key,
@@ -30,7 +30,7 @@ CREATE TABLE chat_friends (
     buddy varchar(255)
 );
 
-DROP TABLE login_users;
+DROP TABLE IF EXISTS login_users;
 
 CREATE TABLE login_users (
     id int auto_increment primary key,
